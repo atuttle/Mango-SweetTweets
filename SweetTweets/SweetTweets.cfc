@@ -42,7 +42,7 @@ http://sweettweetscfc.riaforge.org/
 		<!--- Using shrinkURL from Andy Matthews: http://shrinkurl.riaforge.org/ --->
 		<cfset variables.urlService = createObject("component","shrinkURL").init()/>
 		<!--- Using JSONUtil from Nathan Mische: http://jsonutil.riaforge.org/ --->
-		<cfset variables.jsonService = createObject("component","jsonUtil").init()/>
+		<cfset variables.jsonService = createObject("component","JSONUtil").init()/>
 		<cfreturn this/>
 	</cffunction>
 	
@@ -55,7 +55,7 @@ http://sweettweetscfc.riaforge.org/
 			
 			//first some business -- if being called remotely (ajax), jsonService and urlService will be blank! :(
 			if (isSimpleValue(variables.urlService)){variables.urlService = createObject("component", "shrinkURL").init();}
-			if (isSimpleValue(variables.jsonService)){variables.jsonService = createObject("component", "jsonUtil").init();}
+			if (isSimpleValue(variables.jsonService)){variables.jsonService = createObject("component", "JSONUtil").init();}
 
 			//strip any bookmarks from the url
 			arguments.uri = listFirst(arguments.uri,'##');
@@ -189,7 +189,7 @@ http://sweettweetscfc.riaforge.org/
 		<cfhttp url="#arguments.req#" method="get" result="result" useragent="SweetTweets plugin v0.0 for Mango Blog|http://fusiongrokker.com"></cfhttp>
 		<cflog application="false" file="SweetTweets" text="Twitter Search Result: #result.fileContent#"/>
 		<cftry>
-			<cfset result = jsonService.deserialize(result.fileContent.toString())/>
+			<cfset result = jsonService.deserializeCustom(result.fileContent.toString())/>
 			<cfcatch type="any"><!--- catch errors thrown by jsonService (likely problem w/twitter search - down,etc), return empty set --->
 				<cfset result = StructNew()/>
 				<cfset result.results = arrayNew(1)/> 
