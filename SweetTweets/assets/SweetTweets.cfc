@@ -148,13 +148,13 @@ http://sweettweets.riaforge.org/
 			var local = structNew();
 			var i = 0;
 			local.linkRegex = "((https?|s?ftp|ssh)\:\/\/[^""\s\<\>]*[^.,;'"">\:\s\<\>\)\]\!])";
-			local.atRegex = "@([_a-z0-9]+)";
-			local.hashRegex = "##([_a-z0-9]+)";
+			local.atRegex = "@([_a-zA-Z0-9]+)";
+			local.hashRegex = "##([_a-zA-Z0-9]+)";
 			for (i=1;i lte arrayLen(arguments.tweets);i=i+1){
 				//fix links
 				arguments.tweets[i].content = REReplaceNoCase(arguments.tweets[i].content,local.linkRegex,"<a href='\1'>\1</a>","all");
 				arguments.tweets[i].content = REReplaceNoCase(arguments.tweets[i].content,local.atRegex,"<a href='http://twitter.com/\1'>@\1</a>","all");
-				arguments.tweets[i].content = REReplaceNoCase(arguments.tweets[i].content,local.hashRegex,"<a href='http://www.hashtags.org/tag/\1'>##\1</a>");
+				arguments.tweets[i].content = REReplaceNoCase(arguments.tweets[i].content,local.hashRegex,"<a href='http://search.twitter.com/search?q=\1'>##\1</a>","all");
 			}
 			return arguments.tweets;
 		</cfscript>
