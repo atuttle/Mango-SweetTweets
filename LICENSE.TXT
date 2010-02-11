@@ -16,5 +16,5 @@ specific language governing permissions and limitations under the License.
 
 VERSION INFORMATION:
 
-This file is part of SweetTweets (1.4).
+This file is part of SweetTweets.
 http://sweettweets.riaforge.org/

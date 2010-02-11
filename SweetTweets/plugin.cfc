@@ -2,22 +2,22 @@
 LICENSE INFORMATION:
 
 Copyright 2008, Adam Tuttle
- 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not 
-use this file except in compliance with the License. 
 
-You may obtain a copy of the License at 
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License.
 
-	http://www.apache.org/licenses/LICENSE-2.0 
-	
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software distributed
-under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 
 VERSION INFORMATION:
 
-This file is part of SweetTweets (1.4).
+This file is part of SweetTweets.
 http://sweettweets.riaforge.org/
 --->
 <cfcomponent>
@@ -30,23 +30,26 @@ http://sweettweets.riaforge.org/
 	<cffunction name="init" access="public" output="false" returntype="any">
 		<cfargument name="mainManager" type="any" required="true" />
 		<cfargument name="preferences" type="any" required="true" />
-		
+
 		<cfset var blogid = arguments.mainManager.getBlog().getId() />
 		<cfset variables.path = blogid & "/" & variables.package />
 		<cfset variables.prefManager = arguments.preferences />
 		<cfset variables.blogManager = arguments.mainManager />
-		
+
 		<!--- save plugin asset base path --->
-		<cfset variables.pluginAssetPath = variables.blogManager.getBlog().getBasePath() & "/assets/plugins/" & variables.name />
+		<cfset variables.pluginAssetPath = variables.blogManager.getBlog().getBasePath() & "assets/plugins/" & variables.name />
+		<cfset variables.fullPluginAssetPath = "http://" & cgi.server_name & ":" & cgi.server_port & variables.pluginAssetPath />
 
 		<!--- set setting defaults --->
 		<cfset defaultSetting("tweetLimit",10)/>
 		<cfset defaultSetting("loadingMsg","Loading Tweetbacks...")/>
 		<cfset defaultSetting("useAjax",true)/>
+		<cfset defaultSetting("headerEmpty", "<h3>No Twitter Mentions</h3>")/>
+		<cfset defaultSetting("headerNonEmpty", "<h3>{count} Twitter Mentions</h3>")/>
 
 		<!--- instantiate our worker object --->
-		<cfset variables.sweetTweets = createObject("component","SweetTweets").init(true)/>
-			
+		<cfset variables.sweetTweets = createObject("component","SweetTweets").init(true, getPref("headerEmpty"), getPref("headerNonEmpty")) />
+
 		<cfreturn this/>
 	</cffunction>
 
@@ -75,7 +78,7 @@ http://sweettweets.riaforge.org/
 		<cfreturn "SweetTweets plugin de-activated"/>
 	</cffunction>
 
-<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->	
+<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	<cffunction name="handleEvent" hint="Asynchronous event handling" access="public" output="false" returntype="any">
 		<cfargument name="event" type="any" required="true" />
 		<cfreturn />
@@ -83,43 +86,42 @@ http://sweettweets.riaforge.org/
 	<cffunction name="processEvent" hint="Synchronous event handling" access="public" output="false" returntype="any">
 		<cfargument name="event" type="any" required="true" />
 		<cfset var local = StructNew() />
-		
+
 		<cfif arguments.event.name eq "tweetbacks">
-			<cfset local.uri = "http://" & 
-					cgi.server_name & 
+			<cfset local.uri = "http://" &
+					cgi.server_name &
 					variables.blogManager.getBlog().getBasePath() &
 					arguments.event.getContextData().currentPost.getURL()
 					/>
 			<cfset local.tweets = variables.sweetTweets.getTweetbacks(local.uri, variables.prefmanager.get(variables.package,"tweetLimit"))/>
-			<cflog application="false" file="SweetTweets" text="Tweetback count: #arrayLen(local.tweets)# returned for #local.uri#"/>
-			
+
 			<cfsavecontent variable="local.tweetbackHTML">
 				<cfinclude template="tweetbacks.cfm"/>
 			</cfsavecontent>
 			<cfset arguments.event.setOutputData(local.tweetbackHTML)/>
 
-		
+
 		<cfelseif arguments.event.name eq "settingsNav">
 			<!--- add settings link --->
 				<cfset link = structnew() />
 				<cfset link.owner = "SweetTweets">
 				<cfset link.page = "settings" />
 				<cfset link.title = "SweetTweets" />
-				<cfset link.eventName = "showSweetTweetsSettings" />				
+				<cfset link.eventName = "showSweetTweetsSettings" />
 				<cfset arguments.event.addLink(link)>
-		
+
 		<cfelseif arguments.event.name eq "showSweetTweetsSettings">
 			<cfset data = arguments.event.data />
-			
+
 			<cfsavecontent variable="local.settingsPage">
 				<cfinclude template="settings.cfm">
 			</cfsavecontent>
 
 			<cfset data.message.setTitle("SweetTweets Settings") />
 			<cfset data.message.setData(local.settingsPage) />
-		
+
 		</cfif>
-		
+
 		<cfreturn arguments.event />
 	</cffunction>
 
