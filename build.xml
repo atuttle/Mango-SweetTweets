@@ -11,6 +11,7 @@
 				<include name="*.cfc" />
 				<include name="*.cfm" />
 				<include name="*.xml" />
+				<include name="assets/**" />
 			</fileset>
 		</copy>
 	</target>
