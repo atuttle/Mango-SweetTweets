@@ -21,7 +21,7 @@ VERSION INFORMATION:
 This file is part of SweetTweets.
 http://sweettweets.riaforge.org/
 -->
-<plugin id="com.tuttle.plugins.SweetTweets" name="SweetTweets" version="2.0" provider-name="Adam Tuttle | http://fusiongrokker.com" class="SweetTweets.plugin">
+<plugin id="com.tuttle.plugins.SweetTweets" name="SweetTweets" version="2.0.1" provider-name="Adam Tuttle | http://fusiongrokker.com" class="SweetTweets.plugin">
 	<description><![CDATA[ Based on the <a href="http://danzarrella.com/beyond-tweetbacks-introducing-tweetsuite.html">TweetSuite plugin for Wordpress 
 	by Dan Zarella</a>, this plugin adds similar functionality to Mango.<br/>
 	<br/>
